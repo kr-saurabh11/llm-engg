@@ -47,6 +47,9 @@ dist/
 .vscode/
 .idea/
 *.iml
+.python-version
+*.swp
+*.swo
 
 # ----------------------
 # Jupyter Notebook
@@ -92,5 +95,3 @@ htmlcov/
 # ----------------------
 # Misc
 # ----------------------
-*.swp
-*.swo
