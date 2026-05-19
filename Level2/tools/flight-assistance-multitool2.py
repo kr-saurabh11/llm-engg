@@ -14,7 +14,7 @@ else:
 gemini_url = "https://generativelanguage.googleapis.com/v1beta/openai/"
 openai = OpenAI(api_key=google_api_key, base_url=gemini_url)
 
-MODEL = "gemini-2.5-flash"
+MODEL = "gemini-3.1-flash-lite"
 system_message = """
 You are a helpful assistant for an Airline called FlightAI.
 Give short, courteous answers, no more than 1 sentence.
@@ -155,34 +155,31 @@ def handle_confirmation_tool_call(tool_call_id, arguments):
     return response
 
 
-def handle_tool_call(message):
-    print("Number of tool calls:", len(message.tool_calls))
-    responses = []
-    for every_tool_call in message.tool_calls:
-        print("Tool call is for function:", every_tool_call.function.name)
-        arguments = json.loads(every_tool_call.function.arguments)
-        if every_tool_call.function.name == "get_ticket_price":
-            responses.append(handle_price_tool_call(every_tool_call.id, arguments))
-        elif every_tool_call.function.name == "get_flight_schedules":
-            responses.append(handle_schedule_tool_call(every_tool_call.id, arguments))
-        elif every_tool_call.function.name == "flight_confirmation_number":
-            responses.append(handle_confirmation_tool_call(every_tool_call.id, arguments))
-    print("handle_tool_call is returning responses:", responses)
-    return responses
+def handle_tool_call(called_tool):
+    print("Tool call is for function:", called_tool.function.name)
+    arguments = json.loads(called_tool.function.arguments)
+    if called_tool.function.name == "get_ticket_price":
+        response = handle_price_tool_call(called_tool.id, arguments)
+    elif called_tool.function.name == "get_flight_schedules":
+        response = handle_schedule_tool_call(called_tool.id, arguments)
+    elif called_tool.function.name == "flight_confirmation_number":
+        response = handle_confirmation_tool_call(called_tool.id, arguments)
+    return response
 
 
 def chat(message, history):
     messages = [{"role": "system", "content": system_message}] + history + [{"role": "user", "content": message}]
     response = openai.chat.completions.create(model=MODEL, messages=messages, tools=tools)
 
-    if response.choices[0].finish_reason == "tool_calls":
+    while response.choices[0].finish_reason == "tool_calls":
         message = response.choices[0].message
-        responses = handle_tool_call(message)
         messages.append(message)
-        #messages = messages + responses
-        messages.extend(responses)
-        response = openai.chat.completions.create(model=MODEL, messages=messages)
-
+        for each_tool_call in message.tool_calls:
+            tool_response = handle_tool_call(each_tool_call)
+            messages.append(tool_response)
+        response = openai.chat.completions.create(model=MODEL, messages=messages, tools=tools)
+    print("messages:", messages)
+    print("final response:", response)
     return response.choices[0].message.content
 
 gr.ChatInterface(fn=chat).launch(inbrowser=True)
