@@ -13,6 +13,7 @@ message = "Hello, Google! This is my first ever message to you! Hi!"
 messages = [{"role": "user", "content": message}]
 
 # response = gemini.chat.completions.create(model="gemini-2.5-flash", messages=messages)
+# response = gemini.chat.completions.create(model="gemini-2.5-flash-lite", messages=messages)
 # response = gemini.chat.completions.create(model="gemini-3-flash-preview", messages=messages)
 # response = gemini.chat.completions.create(model="gemini-3.1-flash-lite", messages=messages)
 response = gemini.chat.completions.create(model="gemma-4-31b-it", messages=messages)
