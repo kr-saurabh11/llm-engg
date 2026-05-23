@@ -1,4 +1,4 @@
-# Google AI Reference Ecosystem (`llls.md`)
+# Google AI Reference Ecosystem (`llms.md`)
 
 This file catalogs active Google models, specialized tools, and agent structures. Rate limits are displayed in the standard format: **`Current Usage / Allotted Limit`**.
 
