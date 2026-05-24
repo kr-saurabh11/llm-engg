@@ -1,309 +1,244 @@
 # LLM Engineering - Learning & Demo Project
 
-A hands-on project for learning and exploring Large Language Models (LLMs) with practical examples using Ollama, OpenAI SDK, and HTTP requests.
-
-## Overview
-
-This project demonstrates multiple approaches to interact with LLMs:
-- **Local LLM Execution** using Ollama
-- **Chat Completions** using the OpenAI-compatible API
-- **HTTP Streaming Requests** for real-time responses
-- **System Prompts** for customized AI behavior
+A hands-on project for learning and exploring Large Language Models (LLMs). This repository contains examples and utilities for:
+- running local models with Ollama
+- calling OpenAI-compatible endpoints
+- performing streaming HTTP requests
+- tokenization utilities and tokenizer fallbacks
+- small Gradio demos and code-porting (Python -> C++ / Java) workflows
 
 ## Features
 
-- 🦙 **Ollama Integration** - Run LLMs locally
-- 🔌 **OpenAI SDK** - Compatible with Ollama's OpenAI-compatible endpoint
-- 📡 **HTTP Streaming** - Stream responses for real-time interaction
-- 💬 **System Prompts** - Control AI behavior with custom instructions
-- 🐍 **Python 3.12+** - Modern Python with type hints
+- 🦙 Ollama integration (local models)
+- 🔌 OpenAI-compatible SDK usage (works with Ollama and cloud endpoints)
+- 📡 HTTP streaming examples (line-delimited JSON / server-sent chunks)
+- 🧩 Tokenization examples (Ollama tokenize endpoint + HuggingFace fallback)
+- 🧰 Tools and function-calling examples (flight-assistance multitool)
+- 🔁 Code-porting tools (Python -> C++ and Python -> Java examples) with compile/run helpers
+- 🐍 Python 3.12+ examples and Gradio UIs
 
 ## Prerequisites
 
-- **Python 3.12** or higher
-- **Ollama** - To run LLMs locally
-- **uv** - Fast Python package installer (optional but recommended)
+- Python 3.12 or higher
+- Ollama (for local model execution) — optional if you only use cloud providers
+- clang++ (for compiling generated C++ locally) or a Java 17 runtime/javac if using Java ports
+- Recommended: uv (fast installer) or pip for dependencies
 
 ## Installation
 
-### 1. Install Ollama
+### 1. Install Ollama (optional)
 
-Download and install Ollama from [ollama.com](https://ollama.com):
+Install Ollama for local LLMs:
 
 ```bash
 curl -fsSL https://ollama.com/install.sh | sh
-```
-
-Verify installation:
-```bash
 ollama --version
 ```
 
-### 2. Install uv (Recommended)
+### 2. Install dependencies
+
+Recommended: use `uv` (fast installer) or `pip`.
+
+Using uv (optional):
 
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
-```
-
-Verify installation:
-```bash
-uv --version
-```
-
-### 3. Clone and Setup Project
-
-```bash
-cd /path/to/llm-engg
 uv sync
 ```
 
-Alternatively, using pip:
+Using pip:
+
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Configure Environment
+### 3. Configure environment
 
-Create a `.env` file in the project root:
+Create a `.env` file in the project root and add keys you need (examples):
 
 ```env
-OPENAI_API_KEY=your_api_key_here
+GOOGLE_API_KEY=your_google_api_key_if_using_gemini
+OPENROUTER_API_KEY=your_openrouter_key
+GROQ_API_KEY=your_groq_key
+HF_TOKEN=your_huggingface_token
+# For Ollama local OpenAI-compatible SDK use api_key='ollama' (no value required in .env)
 ```
 
-## Quick Start
+Note: `.env` is ignored by git in this repo.
 
-### 1. Start Ollama Server
+Quick start
 
-Pull and run the Llama 3.2 model:
+1. (Optional) Start Ollama and run a model locally:
 
 ```bash
+ollama pull llama3.2:1b
 ollama run llama3.2:1b
 ```
 
-This will:
-- Download the Llama 3.2 1B model (if not already downloaded)
-- Start the local server on `http://localhost:11434`
+2. Run examples (from repository root):
 
-### 2. Run Examples
-
-#### Basic Chat with OpenAI SDK
+- Basic chat (OpenAI-compatible SDK):
 
 ```bash
-cd llama/level1
-python hello.py
+python llama/level1/hello.py
 ```
 
-#### Using Ollama's Native SDK
+- Ollama native SDK example:
 
 ```bash
-python using_ollama.py
+python llama/level1/using_ollama.py
 ```
 
-#### Streaming with HTTP Requests
+- HTTP streaming examples (line-delimited JSON):
 
 ```bash
-python using_requests2.py
+python llama/level1/using_requests2.py
 ```
 
-#### System Prompts Examples
+- Tokenizer examples (Ollama tokenize endpoint and transformers fallback):
 
 ```bash
-python using_openai_sys_prompt1.py
-python using_openai_sys_prompt2.py
-python using_openai_sys_prompt3.py
+python "Level 1/tokenizer/tokenizer_llama.py"
+python "Level 1/tokenizer/tokenizer_gpt.py"
 ```
 
-## Project Structure
+- Code porting UI (Gradio):
+
+```bash
+python Level4/code-porting/python_to_cpp.py
+# opens a Gradio UI; convert code and the generated C++ is written to output/<model>.cpp
+```
+
+Notes about running generated code (C++ / Java): see the Code-porting section below.
+
+## Project structure (high level)
 
 ```
 llm-engg/
-├── README.md              # This file
-├── SETUP.md              # Detailed setup instructions
-├── pyproject.toml        # Project configuration
-├── requirements.txt      # Python dependencies
-├── uv.lock              # Dependency lock file
-├── .env                 # Environment variables (create this)
-├── .gitignore           # Git ignore rules
-└── llama/
-    └── level1/
-        ├── hello.py                      # Basic chat example
-        ├── using_ollama.py               # Ollama SDK example
-        ├── using_openai_sys_prompt1.py   # System prompt example 1
-        ├── using_openai_sys_prompt2.py   # System prompt example 2
-        ├── using_openai_sys_prompt3.py   # System prompt example 3
-        └── using_requests.py             # HTTP streaming example
+├── README.md
+├── pyproject.toml
+├── requirements.txt
+├── SETUP.md
+├── .env (create this locally)
+├── Level 1/
+│   ├── llama/                # basic and intermediate examples (hello.py, requests examples)
+│   └── tokenizer/            # tokenizer demos (tokenizer_llama.py, tokenizer_gpt.py)
+├── Level2/                   # Gradio demos, multimodel, tools examples
+│   ├── chat-box/
+│   ├── chat-bw-llms/
+│   ├── langchain/
+│   └── multimodel/
+├── Level3/                   # research notebooks and visualizers
+└── Level4/
+    └── code-porting/         # python_to_cpp.py, python_to_java.py (Gradio UI + compile/run helpers)
 ```
 
 ## Dependencies
 
-### Core LLM Libraries
-- **ollama** - Official Ollama SDK for Python
-- **openai** - OpenAI Python client (compatible with Ollama's API)
-- **requests** - HTTP library for manual API calls
+See `requirements.txt` for the full list. Important ones include:
 
-### Data Science & ML
-- **langchain** - LLM application framework
-- **transformers** - HuggingFace transformers library
-- **langchain-community** - Community integrations
+- `openai` (OpenAI-compatible client used with Ollama and cloud endpoints)
+- `requests` (HTTP streaming and tokenization calls)
+- `python-dotenv` (load `.env` variables)
+- `transformers` (optional; used as a tokenizer fallback)
+- `gradio` (UI demos)
 
-### AI Provider SDKs
-- **google-generativeai** - Google's Generative AI API
-- **anthropic** - Anthropic's Claude API
+## API endpoints (examples)
 
-### Utilities
-- **python-dotenv** - Load environment variables
-- **jupyter**-related - Jupyter notebooks support
-- **chromadb** - Vector database for embeddings
-- **beautifulsoup4** - Web scraping
+- Ollama OpenAI-compatible endpoint:
 
-See `requirements.txt` for complete list.
-
-## API Endpoints
-
-### Ollama OpenAI-Compatible Endpoint
 ```
 POST http://localhost:11434/v1/chat/completions
 ```
 
-### Ollama Native Endpoint
+- Ollama native endpoint (tokenize / api/chat):
+
 ```
 POST http://localhost:11434/api/chat
+POST http://localhost:11434/api/tokenize
 ```
 
-## Example Usage
+## Usage examples
 
-### Using OpenAI SDK with Ollama
+1) OpenAI-compatible client (Ollama):
 
 ```python
 from openai import OpenAI
 
-openai = OpenAI(
-    base_url='http://localhost:11434/v1',
-    api_key='ollama'
-)
+openai = OpenAI(base_url='http://localhost:11434/v1', api_key='ollama')
 
-response = openai.chat.completions.create(
-    model="llama3.2:1b",
-    messages=[
-        {"role": "user", "content": "Hello, llama!"}
-    ]
-)
-
-print(response.choices[0].message.content)
-```
-
-### Using Ollama SDK
-
-```python
-from ollama import chat
-
-response = chat(
+resp = openai.chat.completions.create(
     model='llama3.2:1b',
-    messages=[{'role': 'user', 'content': 'Hello!'}]
+    messages=[{"role": "user", "content": "Hello!"}],
 )
-
-print(response.message.content)
+print(resp.choices[0].message.content)
 ```
 
-### Using HTTP Streaming
+2) Ollama native (HTTP streaming and tokenize endpoints):
 
 ```python
 import requests
 import json
 
-response = requests.post(
-    'http://localhost:11434/api/chat',
-    json={
-        "model": "llama3.2:1b",
-        "messages": [{"role": "user", "content": "Hello!"}],
-        "stream": True
-    },
-    stream=True
-)
-
-for line in response.iter_lines():
+payload = {"model":"llama3.2:1b","messages":[{"role":"user","content":"Hello"}],"stream":True}
+resp = requests.post('http://localhost:11434/api/chat', json=payload, stream=True)
+for line in resp.iter_lines(decode_unicode=True):
     if line:
-        print(json.loads(line)['message']['content'], end="")
+        chunk = json.loads(line)
+        print(chunk.get('message', {}).get('content',''), end='')
 ```
 
 ## Troubleshooting
 
-### Ollama Connection Error
-Ensure Ollama is running:
-```bash
-ollama run llama3.2:1b
-```
+- Ollama connection errors: make sure Ollama is running and the model is available (see Quick start).
+- If you see JSONDecodeError when calling the HTTP API, the server may return line-delimited JSON (streaming); parse response.iter_lines() instead of response.json().
+- If a script fails with "module shadowing" (e.g., a local file named `requests.py`), rename that file — don't use filenames that match libraries you import.
 
-### Model Not Found
-Download the model first:
-```bash
-ollama pull llama3.2:1b
-```
+Install deps if you see import errors:
 
-### Port Already in Use
-Ollama defaults to port 11434. Check if it's already running or use a different port.
-
-### Import Errors
-Ensure all dependencies are installed:
 ```bash
-uv sync
-# or
 pip install -r requirements.txt
+# or, with uv
+uv sync
 ```
 
-## Learning Path
+## Code-porting (Python → C++ / Java)
 
-1. **Start with** `hello.py` - Basic chat completion
-2. **Explore** `using_ollama.py` - Native SDK usage
-3. **Try** `using_requests.py` - Raw HTTP handling and streaming
-4. **Study** `using_openai_sys_prompt*.py` - System prompts and AI control
+Location: `Level4/code-porting/`.
 
-## Available Models
+- `python_to_cpp.py` — Gradio UI and helpers that:
+  - send the Python snippet to a chosen model
+  - write the generated C++ to `output/<safe_model>.cpp` (model id is sanitized)
+  - compile & run the generated binary with `compile_and_run(<model>)` (compiles `output/<safe_model>.cpp` to `output/<safe_model>` and runs it)
 
-Check available models and their sizes:
+- `python_to_java.py` — similar flow but targets Java 17:
+  - generated Java is written to `output/Main.java`
+  - compile using `javac -d output output/Main.java`
+  - run with `java -cp output Main`
 
-```bash
-ollama list
-```
+Notes:
 
-Common lightweight models for local development:
-- `llama3.2:1b` - 1 Billion parameters (very fast, lower quality)
-- `llama3.2:3b` - 3 Billion parameters (balanced)
-- `mistral:latest` - Fast and efficient
+- Filenames are sanitized to avoid invalid filesystem characters.
+- `compile_and_run()` helpers expect the generated sources to be in the `output/` directory and give helpful error messages if compilation fails or tools are missing.
 
-See [Ollama Models](https://ollama.com/library) for more options.
+## Environment variables
 
-## Environment Variables
-
-Create or update `.env` file:
+Examples you may need in `.env`:
 
 ```env
-OPENAI_API_KEY=your_key_here  # Optional, not needed for local Ollama
+GOOGLE_API_KEY=...
+OPENROUTER_API_KEY=...
+GROQ_API_KEY=...
+HF_TOKEN=...
+# Local Ollama usage with the OpenAI-compatible client uses api_key='ollama'
 ```
 
-⚠️ **Important**: The `.env` file is in `.gitignore` and won't be committed to version control.
+`.env` is ignored by git — never commit credentials.
 
-## Performance Tips
-
-- Start with smaller models like `llama3.2:1b` for faster responses
-- Use streaming for better UX with larger models
-- Set `stream=True` in requests for real-time output
-- Use appropriate system prompts to reduce token usage
-
-## Additional Resources
+## Additional resources
 
 - [Ollama Documentation](https://github.com/jmorganca/ollama)
 - [OpenAI API Reference](https://platform.openai.com/docs/api-reference)
 - [LangChain Documentation](https://python.langchain.com/)
 
-## License
-
-This is a learning project. Modify and use as needed for your studies.
-
-## Contributing
-
-Feel free to add more examples and improvements to this learning project!
-
----
-
-**Last Updated**: May 2, 2026
+**Last Updated**: May 24, 2026
