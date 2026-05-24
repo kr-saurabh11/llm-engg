@@ -1,7 +1,6 @@
 import requests
 import os
 from dotenv import load_dotenv
-from openai import OpenAI
 
 load_dotenv(override=True)
 hf_token = os.getenv('HF_TOKEN')
@@ -13,7 +12,7 @@ else:
 MODEL1='black-forest-labs/FLUX.1-schnell'
 
 response = requests.post(
-    f"https://router.huggingface.co/hf-inference/models/{MODEL2}",
+    f"https://router.huggingface.co/hf-inference/models/{MODEL1}",
     headers={
         "Authorization": f"Bearer {os.getenv('HF_TOKEN')}",
         "Content-Type": "application/json"
