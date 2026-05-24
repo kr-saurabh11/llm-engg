@@ -24,6 +24,7 @@ dependencies = [
     "ollama>=0.6.2",
     "openai>=2.33.0",
     "requests>=2.33.1",
+    "system-info>=2.0.3",
     "tiktoken>=0.12.0",
     "transformers>=5.7.0",
 ]
