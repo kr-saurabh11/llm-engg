@@ -22,7 +22,8 @@ STYLE_OPTIONS = [
     "Anime",
     "Pop Art",
     "Cyberpunk",
-    "Watercolor"
+    "Watercolor",
+    "Ghibli Style Art"
 ]
 
 HF_URL = "https://router.huggingface.co/hf-inference/models/{}"
