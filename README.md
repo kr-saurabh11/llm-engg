@@ -98,8 +98,8 @@ python llama/level1/using_requests2.py
 - Tokenizer examples (Ollama tokenize endpoint and transformers fallback):
 
 ```bash
-python "Level 1/tokenizer/tokenizer_llama.py"
-python "Level 1/tokenizer/tokenizer_gpt.py"
+python "Level1/tokenizer/tokenizer_llama.py"
+python "Level1/tokenizer/tokenizer_gpt.py"
 ```
 
 - Code porting UI (Gradio):
