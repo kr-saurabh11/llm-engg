@@ -2,7 +2,6 @@ import os
 import glob
 import tiktoken
 import numpy as np
-from dotenv import load_dotenv
 from langchain_openai import OpenAIEmbeddings
 from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
@@ -13,10 +12,6 @@ import plotly.graph_objects as go
 from openai import OpenAI
 
 
-# load_dotenv(override=True)
-# google_api_key = os.getenv('GOOGLE_API_KEY')
-# gemini_url = "https://generativelanguage.googleapis.com/v1beta/openai/"
-# gemini = OpenAI(api_key=google_api_key, base_url=gemini_url)
 # MODEL = "gemma-4-31b-it"
 # MODEL = "gemini-3.5-flash"
 MODEL = "qwen3-coder"
