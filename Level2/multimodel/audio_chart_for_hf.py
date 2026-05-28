@@ -200,7 +200,7 @@ with gr.Blocks(
         [message, chatbot]
     ).then(
         chat,
-        [chatbot, voice_enabled],
+        [chatbot, voice_enabled,model],
         [chatbot, audio_output]
     )
 
