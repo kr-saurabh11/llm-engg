@@ -22,3 +22,31 @@ def sanitize_llm_response(text: str) -> str:
     # Remove any other HTML/XML tags
     text = _TAG_RE.sub("", text)
     return text.strip()
+
+def normalize_history(history: list[dict]) -> list[dict]:
+    return [
+        {
+            "role": message["role"],
+            "content": " ".join(
+                block["text"]
+                for block in message.get("content", [])
+                if block.get("type") == "text"
+            )
+        }
+        for message in history
+    ]
+
+def sanitize_response(response_content):
+    if isinstance(response_content, str):
+        return response_content
+
+    if isinstance(response_content, list):
+        text_parts = []
+
+        for item in response_content:
+            if isinstance(item, str):
+                text_parts.append(item)
+
+        return "\n".join(text_parts)
+
+    return str(response_content)

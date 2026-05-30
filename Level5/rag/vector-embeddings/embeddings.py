@@ -14,7 +14,7 @@ import plotly.graph_objects as go
 # MODEL = "gemma-4-31b-it"
 # MODEL = "gemini-3.5-flash"
 MODEL = "qwen3-coder"
-db_name = "../commons/vector_db"
+db_name = "../../commons/vector_db"
 
 
 knowledge_base_path = "../knowledge-base/**/*.md"
