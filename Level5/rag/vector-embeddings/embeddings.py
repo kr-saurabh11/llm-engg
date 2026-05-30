@@ -9,13 +9,12 @@ from langchain_community.document_loaders import DirectoryLoader, TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from sklearn.manifold import TSNE
 import plotly.graph_objects as go
-from openai import OpenAI
 
 
 # MODEL = "gemma-4-31b-it"
 # MODEL = "gemini-3.5-flash"
 MODEL = "qwen3-coder"
-db_name = "vector_db"
+db_name = "../commons/vector_db"
 
 
 knowledge_base_path = "../knowledge-base/**/*.md"
@@ -66,6 +65,7 @@ embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 #embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
 
 if os.path.exists(db_name):
+    print(f"deleting existing db from: {db_name}")
     Chroma(persist_directory=db_name, embedding_function=embeddings).delete_collection()
 
 vectorstore = Chroma.from_documents(documents=chunks, embedding=embeddings, persist_directory=db_name)
